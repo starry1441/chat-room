@@ -8,14 +8,18 @@ create table user (userId int primary key auto_increment,
                    password varchar(50),
                    nickName varchar(50),   -- 昵称
                    iconPath varchar(2048), -- 头像路径
-                   signature varchar(100),
+                   signature varchar(100), -- 个性签名
                    lastLogout DateTime -- 上次登录时间
-); -- 个性签名
+);
 
-insert into user values(null, 'test', '123', '蔡徐坤', '', '我擅长唱', now());
-insert into user values(null, 'test2', '123', '蔡徐坤2', '', '我擅长跳', now());
-insert into user values(null, 'test3', '123', '蔡徐坤3', '', '我擅长rap', now());
-insert into user values(null, 'test4', '123', '蔡徐坤4', '', '我擅长篮球', now());
+-- insert into user values(null, 'test', '123', '蔡徐坤', '', '我擅长唱', now());
+-- insert into user values(null, 'test2', '123', '蔡徐坤2', '', '我擅长跳', now());
+-- insert into user values(null, 'test3', '123', '蔡徐坤3', '', '我擅长rap', now());
+-- insert into user values(null, 'test4', '123', '蔡徐坤4', '', '我擅长篮球', now());
+insert into user values(null, 'test', '123', '阿星', '', '我擅长java', now());
+insert into user values(null, 'test2', '123', '阿甜', '', '我擅长唱歌', now());
+insert into user values(null, 'test3', '123', '阿琦', '', '我擅长前端', now());
+insert into user values(null, 'test4', '123', '阿库', '', '我擅长篮球', now());
 
 
 
