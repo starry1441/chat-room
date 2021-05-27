@@ -4,10 +4,7 @@ import org.example.exception.AppException;
 import org.example.model.User;
 import org.example.util.Util;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,8 +43,10 @@ public class UserDao {
                 user.setNickName(resultSet.getString("nickName"));
                 user.setIconPath(resultSet.getString("iconPath"));
                 user.setSignature(resultSet.getString("signature"));
-                java.sql.Timestamp lastLogout  = resultSet.getTimestamp("lastLogout");
+                java.sql.Timestamp lastLogout = resultSet.getTimestamp("lastLogout");
                 user.setLastLogout(new Date(lastLogout.getTime()));
+//                statement.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+//                user.setLastLogout(new Timestamp(System.currentTimeMillis()));
             }
             return user;
         }catch (Exception e) {

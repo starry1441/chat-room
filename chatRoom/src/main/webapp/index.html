@@ -363,8 +363,12 @@
           $.ajax({
             type: "get",
             url: "channel",
-            success: function(data, status) {
-              app.channels = data;
+            success: function(body, status) {
+              if(body.ok) {
+                app.channels = body.data;
+              }else {
+                alert(body.reason)
+              }
             }
           })
         }
