@@ -51,13 +51,13 @@ public class MessageDao {
             //1. 获取数据库连接Connection
             connection = Util.getConnection();
             //2. 通过Connection+sql 创建操作命令对象Statement
-            String sql = "select m.*,u.nickName from message m join user u on u.userId=m.userId where m.sendTime>(select lastLogout from user where userId=?)";
+                String sql = "select m.*,u.nickName from message m join user u on u.userId = m.userId where m.sendTime > (select lastLogout from user where userId = ?);";
             statement = connection.prepareStatement(sql);
             statement.setInt(1,userId);
             //3. 执行sql：执行前替换占位符
             resultSet = statement.executeQuery();
             //如果是查询操作，处理结果集
-            if (resultSet.next()) {//移动到下一行，有数据返回true
+            while (resultSet.next()) {//移动到下一行，有数据返回true
                 Message message = new Message();
                 //获取结果集字段，设置对象属性
                 message.setUserId(userId);

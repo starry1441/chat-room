@@ -34,7 +34,7 @@ public class UserDao {
             //3. 执行sql：执行前替换占位符
             resultSet = statement.executeQuery();
             //如果是查询操作，处理结果集
-            if (resultSet.next()) {//移动到下一行，有数据返回true
+            while (resultSet.next()) {//移动到下一行，有数据返回true
                 user = new User();
                 //设置结果集字段到用户对象的属性中
                 user.setUserId(resultSet.getInt("userid"));
@@ -57,4 +57,24 @@ public class UserDao {
         }
     }
 
+    /**
+     * 修改用户最后登录时间
+     */
+    public static int updateLastLogout(Integer userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Util.getConnection();
+            String sql = "update user set lastLogout=? where userId=?";
+            statement = connection.prepareStatement(sql);
+            statement.setTimestamp(1,new Timestamp(System.currentTimeMillis()));
+            statement.setInt(2,userId);
+            int result = statement.executeUpdate();
+            return result;
+        }catch (Exception e) {
+            throw new AppException("修改用户上次登录时间出错", e);
+        }finally {
+            Util.close(connection,statement);
+        }
+    }
 }

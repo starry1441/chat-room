@@ -3,7 +3,7 @@ package org.example.model;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,16 +20,55 @@ public class MessageCenter {
     private static final ConcurrentHashMap<Integer, Session>  clients = new ConcurrentHashMap<>();
 
     /**
+     * 阻塞队列(无边界的队列)
+     */
+    private static BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+
+
+    private static volatile MessageCenter center;
+
+    private MessageCenter(){}
+
+    public static MessageCenter getInstance() {
+        //单例模式，双重效验锁的单例模式
+        if (center == null) {
+            synchronized (MessageCenter.class) {
+                if (center == null) {
+                    center = new MessageCenter();
+                    new Thread(() -> {  //启动一个线程，不停地从阻塞队列中拿数据
+                        while (true) {
+                            try {
+                                String message = queue.take();  //阻塞式获取数据，如果队列为空，阻塞等待
+                                sendMessage(message);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+            }
+        }
+        return center;
+    }
+
+    /**
+     * 不直接发消息，先把消息存放再队列中，由另一个线程去发
+     */
+    public void addMessage(String message) {
+        queue.add(message);
+    }
+
+    /**
      * websocket建立连接时，添加用户id和客户端session，保存起来
      */
-    public static void addOnlineUser(Integer userId, Session session) {
+    public void addOnlineUser(Integer userId, Session session) {
         clients.put(userId,session);
     }
 
     /**
      * 关闭websocket连接，和出错时，删除客户端session
      */
-    public static void delOnlineUser(Integer userId) {
+    public void delOnlineUser(Integer userId) {
         clients.remove(userId);
     }
 
