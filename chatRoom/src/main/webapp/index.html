@@ -16,7 +16,7 @@
 
     <v-navigation-drawer v-model="drawer" app>
       <v-list dense v-show="!login.isLogin">
-        <v-list-item link>
+        <v-list-item link v-on:click="registerForm.showDialog=true">
           <v-list-item-action>
             <v-icon>mdi-account-plus</v-icon>
           </v-list-item-action>
@@ -124,6 +124,18 @@
           <v-col><v-card class="pa-2 text-center">请先登陆!</v-card></v-col>
         </v-row>
 
+        <v-row v-show="!login.isLogin">
+          <v-col><v-card class="pa-2 text-center">一个浏览器对应一个账号，如果需要在一台电脑测试互发消息，则需打开不同浏览器输入不同账号</v-card></v-col>
+        </v-row>
+
+        <v-row v-show="!login.isLogin">
+          <v-col><v-card class="pa-2 text-center">已有账号密码，可以直接使用，也可注册</v-card></v-col>
+        </v-row>
+
+        <v-row v-show="!login.isLogin">
+          <v-col><v-card class="pa-2 text-center">用户名:xingxing  密码:123&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户名:qiqi  密码:456&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户名:duoduo  密码:789</v-card></v-col>
+        </v-row>
+
         <v-row justify="center">
           <v-dialog v-model="login.showLoginDialog" persistent max-width="400px">
             <v-card>
@@ -155,6 +167,48 @@
             </v-card>
           </v-dialog>
         </v-row>
+
+        <v-row justify="center">
+          <v-dialog v-model="registerForm.showDialog" persistent max-width="400px">
+            <v-card>
+              <v-card-title>
+                <span class="headline">注册</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="12">
+                      <v-text-field label="用户名*" v-model="registerForm.inputUsername" required></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" sm="12">
+                      <v-text-field label="密码*" v-model="registerForm.inputPassword" required></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" sm="12">
+                      <v-text-field label="昵称*" v-model="registerForm.inputNickName" required></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" sm="12">
+                      <v-text-field label="特长*" v-model="registerForm.inputSignature" required></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" sm="6">
+                      <v-btn color="primary" block v-on:click="register()">注册</v-btn>
+                    </v-col>
+                    <v-col cols="12" sm="6">
+                      <v-btn color="primary" block v-on:click="registerForm.showDialog = false">取消</v-btn>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+        </v-row>
       </v-content>
     </v-app>
   </div>
@@ -178,6 +232,13 @@
           showLoginDialog: false,
           inputUsername: "",
           inputPassword: "",
+        },
+        registerForm: {
+          showDialog: false,
+          inputUsername: "",
+          inputPassword: "",
+          inputNickName: "",
+          inputSignature: "",
         },
         user: {
           // name: 'test',
@@ -255,6 +316,29 @@
             }
           })
         },
+        register(){
+          $.ajax({
+            url: 'register',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              name: app.registerForm.inputUsername,
+              password: app.registerForm.inputPassword,
+              nickName: app.registerForm.inputNickName,
+              signature: app.registerForm.inputSignature,
+            }),
+            success: function(data, status) {
+              if (!data.ok) {
+                alert('注册失败! ' + data.reason);
+                return;
+              }else {
+                alert("恭喜你！注册成功！");
+              }
+              app.registerForm.showDialog = false;
+              app.login.showLoginDialog = true;
+            }
+          })
+        },
         logout() {
           console.log("logout");
           app.login.isLogin = false;
@@ -263,11 +347,10 @@
             url: 'logout',
             type: 'get',
             success: function(body, status) {
-              if(body.ok) {
+              if(body.ok)//注销成功
                 window.location.reload();
-              }else{
-                alert(body.reason);
-              }
+              else
+                alert(body.reason)
             }
           });
         },
@@ -321,7 +404,7 @@
         initWebSocket() {
           // 登陆成功后, 初始化 WebSocket 对象
           if('WebSocket' in window){
-            this.websocket = new WebSocket("ws://localhost:8080/java_chatroom/message/" + this.user.userId);
+            this.websocket = new WebSocket("ws://82.156.229.239:8080/java_chatroom/message/" + this.user.userId);
             console.log("link success")
           }else{
               alert('Not support websocket')
@@ -368,11 +451,10 @@
             type: "get",
             url: "channel",
             success: function(body, status) {
-              if(body.ok) {
+              if(body.ok)
                 app.channels = body.data;
-              }else {
+              else
                 alert(body.reason)
-              }
             }
           })
         }

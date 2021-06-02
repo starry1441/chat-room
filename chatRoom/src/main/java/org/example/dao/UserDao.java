@@ -77,4 +77,34 @@ public class UserDao {
             Util.close(connection,statement);
         }
     }
+
+    /**
+     * 插入注册用户
+     */
+    public static int insertUser(User input) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = Util.getConnection();
+            String sql = "insert user(name,password,nickName,iconPath,signature,lastLogout) values(?,?,?,?,?,?)";
+            statement = connection.prepareStatement(sql);
+            statement.setString(1,input.getName());
+            statement.setString(2,input.getPassword());
+            statement.setString(3,input.getNickName());
+            statement.setString(4,"");
+            statement.setString(5,input.getSignature());
+            Timestamp time = new Timestamp(System.currentTimeMillis());
+            statement.setTimestamp(6,time);
+
+            //将注册用户返回给前端的数据修改一下
+            input.setIconPath("");
+            input.setLastLogout(time);
+
+            return statement.executeUpdate();
+        }catch (Exception e) {
+            throw new AppException("插入注册用户失败",e);
+        }finally {
+            Util.close(connection,statement);
+        }
+    }
 }
