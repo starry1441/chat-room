@@ -404,7 +404,7 @@
         initWebSocket() {
           // 登陆成功后, 初始化 WebSocket 对象
           if('WebSocket' in window){
-            this.websocket = new WebSocket("ws://82.156.229.239:8080/java_chatroom/message/" + this.user.userId);
+            this.websocket = new WebSocket("ws://localhost:8080/java_chatroom/message/" + this.user.userId);
             console.log("link success")
           }else{
               alert('Not support websocket')
