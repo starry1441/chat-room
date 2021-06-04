@@ -348,7 +348,8 @@
             type: 'get',
             success: function(body, status) {
               if(body.ok)//注销成功
-                window.location.reload();
+                alert("tuichu");
+                //window.location.reload();
               else
                 alert(body.reason)
             }
