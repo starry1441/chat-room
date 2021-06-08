@@ -38,9 +38,9 @@ public class Util {
         DateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         mapper.setDateFormat(dataFormat);  //日期格式化
         // 设置连接数据库的基本属性
-        dataSource.setURL("jdbc:mysql://localhost:3306/java_chatroom");
+        dataSource.setURL("jdbc:mysql://82.156.229.239:3306/java_chatroom");
         dataSource.setUser("root");
-        dataSource.setPassword("111111");
+        dataSource.setPassword("11111111");
         dataSource.setUseSSL(false);
         dataSource.setCharacterEncoding("UTF-8");   //解决插入中文数据乱码问题
     }
